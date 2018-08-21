@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Lewisville Jail: Inmate Report</title>		
+		<meta name="viewport" content="width=device-width" />
+		<link rel="shortcut icon" href="http://metrics.cityoflewisville.com/assets/pmartin_dark.png" />
+		
+		<link rel="manifest" href="icons/manifest.json">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+		
+		<!--Internet Explorer - use latest version-->
+        <meta http-equiv="x-ua-compatible" content="IE=edge">
+
+        <!--Keep mobile browsers at correct zoom-->
+        <meta charset="utf-8">
+       
+		<style type="text/css">
+			html,body{ 
+				margin: 0; 
+				padding: 0; 
+				border: 0; 
+				font-family: Calibri; 
+				font-size:12pt;
+			}
+			ul,li {
+				list-style: none; 
+				margin:0; 
+				padding:0;
+			}
+			
+			
+			#header{width: 100%;height: 100px;background: #5d2490;box-shadow: 0px 2px 4px purple;}
+			#logo{width:240px;height: 80px;float: left;padding-left:40px;padding-right:10px;}
+			#brand-logo{text-decoration: none;color: white;font-size: 30px;line-height: 115px;display: block;margin;}	
+			#navbar{width:1000px;height: 80px;margin: 0px auto;float: right;}
+			#navbar>li{float: left;list-style: none;width: 190px;height: 90px;}
+			li>a{text-decoration: none;color: #89BB54;font-size: 35px;line-height: 100px;display: block;text-align: center;}
+			li>a:hover,
+			li>a:focus{background: #6A2A80;color: white;}
+			
+			#divCenter {
+				width:100%; 
+				height:100%;
+			}			
+			#divTitle {
+				text-align:center; /*Center the title*/
+			}			
+			#divTitle h2, #divTitle h4 {
+				margin:0.25em;				
+			}
+			#divTitle h2 {
+				font-family: Times New Roman;
+				font-size:3em;
+			}			
+			#divMain{
+				font-size:0.8em;
+				width:500px;
+				margin:0 auto;  /*Center the main div*/
+			}
+			.row {					
+				height: 100%;
+				padding:1em;
+				margin-bottom: 2em;
+				background-color: white;
+				border: 50px solid whitesmoke;
+			}
+			
+			.cell, .cell div{
+				border:none;				
+				margin-bottom: 5px;
+				text-align: center;
+				width:100%;
+			}
+			
+			.mugShotContainer img {
+				border: solid 2px whitesmoke;
+			}
+			
+			.inmateNameContainer ul li b {font-size: 1.4em; font-weight:bold;}
+			.inmateDateContainer,.inmateAgeContainer{font-size: 1.1em;}
+			
+			/*Charges Table: Desktop screen layout*/
+			@media (min-width: 480px) {
+				.rwd-table {
+					margin: 1em 0;
+					min-width: 300px;
+					overflow: hidden;
+					width:100%;					
+					font-size: 1.1em;					
+				}
+				.rwd-table th {
+					white-space:nowrap;
+				}
+				
+				.rwd-table td, .rwd-table th{
+					display: table-cell;
+					border-bottom: solid 1px gray;
+					padding: 0.5em 0.5em;
+					text-align:left;
+				}
+				/*Hide the tds used in list-view*/
+				.rwd-table td:before {
+					display: none;
+				}				
+				.rwd-table th:first-child, .rwd-table td:first-child {
+					padding-left: 0;
+				}
+				.rwd-table th:last-child, .rwd-table td:last-child {
+					padding-right: 0;
+				}
+			}
+			
+		/***************************************************************/
+		/*PHONES*/
+		/***************************************************************/
+		
+		@media screen and (max-width: 600px) {
+		  .navbar-fixed{display:none;}
+		  .brand-logo{
+			width:auto;
+			}
+	   }
+			
+		</style>
+		
+		<!---------------------------------->
+		<!--Google Analytics-->
+		<!--https://www.google.com/analytics/web/?authuser=0#realtime/rt-content/a35815214w63720524p65383322/-->
+		<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-35815214-1']); _gaq.push(['_trackPageview']); (function () { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script>
+		<!---------------------------------->
+	</head>
+	
+	<body>
+
+		<div class="navbar-fixed">
+                <nav>
+				<div id="header">
+					<div class="nav-wrapper deep-purple">
+						<div id="logo"><a href="https://www.cityoflewisville.com"><img src="https://image.ibb.co/dj2s4x/try.png"/></a></div>
+						<a id="brand-logo">City of Lewisville Jail Inmate Report</a>
+					</div>
+				</div>
+                </nav>
+        </div>
+		
+			
+		
+		<div>
+			<div>
+			<!-- Denton County Bonding Companies -->
+			<hr/>
+			</div>
+			<div id="divMain"></div>
+		</div>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script>
+			var App = (function(){
+				return {
+				
+					url_server: document.URL.split("/")[2],
+					
+					/*----------------------------------------*/
+					initiate: function(){
+						var that = this;
+						that.getInmates();
+					},
+					
+					/*----------------------------------------*/
+					getInmates: function(){
+						var that=this;
+						
+						$.post('https://ax1vnode1.cityoflewisville.com/v2/',{
+							webservice : 'Jail/Inmate Report',
+							contentType: "application/json; charset=utf-8",
+							dataType: 'jsonp'
+							},
+							
+							
+							function(_data){
+								var _h = "";
+								var _chargesJSON = [];
+								
+								if(_data[0].length == 0)
+								{
+									_h += '<br/><br/><center><b style="font-size:1.1em;padding-top:4em;">There are no inmates in the detention facility.</b></center>';
+								}
+								
+								for (var i = 0; i < _data[0].length; i++){
+									
+										//Individual Inmate Container Div
+											_h += '<div id="divInmateRecord_' + _data[0][i].Jail_Confinement_Link + '" class="row">';
+										
+											//Mugshot
+													if (_data[0][i].Thumbnail){
+														_h += ' <div class="cell mugShotContainer">';
+														_h += '  <img src="data:image/x-icon;base64,' + _data[0][i].Thumbnail + '"/>';
+														_h += ' </div>';
+													}else{
+														_h += ' <div class="cell mugShotContainer">';
+														_h += '  <p class="imageNotAvailable">Image not yet available</p>';
+														_h += ' </div>';
+													}
+													
+											//Main Info
+												_h += '<div class="cell bioContainer">';
+												
+												//Name
+													_h += ' <div class="subBioContainer inmateNameContainer">';
+													_h += '  <ul><li><b>' + _data[0][i].Inmate + '</b></li></ul>';
+													_h += ' </div>';
+												
+												//Date
+													_h += ' <div class="subBioContainer inmateDateContainer">';
+													_h += '  <ul><li>Date: ' + _data[0][i].Date + '</li></ul>';
+													_h += ' </div>';
+												
+												//Age
+													_h += ' <div class="subBioContainer inmateAgeContainer">';
+													_h += '  <ul><li>Age: ' + _data[0][i].Age + '</li></ul>';
+													_h += ' </div>';
+													
+												_h += '</div>';
+												
+											//Charges
+											_h += ' <div class="cell chargesContainer">';
+												
+												//Charges: Server will return a JSON array of charges
+												if (_data[0][i].Charges){
+												_chargesJSON = jQuery.parseJSON(_data[0][i].Charges).charges;
+													
+													_h += '<table class="rwd-table">';
+													//_h += ' <thead>';
+													_h += '  <tr>';
+													_h += '   <th>Statute</th><th>Bond Type</th><th>Bond Amount</th>';
+													_h += '  </tr>';
+													//_h += ' </thead>';
+													//_h += ' <tbody>';												
+													for (var x = 0; x < _chargesJSON.length; x++){														
+														_h += '<tr>';
+														_h += ' <td data-th="Statute">' + _chargesJSON[x].statute + '</td>';
+														_h += ' <td data-th="Bond Type">' + _chargesJSON[x].bondType + '</td>';
+														_h += ' <td data-th="Bond Amount">$' + _chargesJSON[x].bondAmount + '</td>';
+														_h += '</tr>';
+													}
+													//_h += '</tbody>';
+													_h += '</table>';
+												}
+												
+											_h += ' </div>';
+											
+										//Closing tags												
+										_h += '</div>'
+										_h += '<hr/>'
+									}										
+								
+							
+								
+								//Append this html to the main div
+								$("#divMain").html(_h);								
+							
+						});						
+					} //getInmates
+				} //End Return
+			})(); //End App
+				
+			$(document).ready(function(){
+				App.initiate();	
+			});
+		</script>
+
+	<div>
+		<h2><center><a href="https://dentoncounty.com/Departments/Aide-to-Commissioners-Court/Bail-Bond-Board/Licensed-Bonding-Companies.aspx">Denton County Bonding Companies</a></center></h2>
+	</div>
+
+	<footer><center><b>Payment for Lewisville only, Class C bond and fine amounts can be made by Mastercard / Visa credit or debit card. For more information, please contact 972-219-3665.</center></b></footer>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+	 
+	 
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	</body>
+</html>
